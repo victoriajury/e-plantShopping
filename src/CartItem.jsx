@@ -9,27 +9,36 @@ const CartItem = ({ onContinueShopping }) => {
 
   // Calculate total amount for all products in the cart
   const calculateTotalAmount = () => {
- 
+    let total = 0;
+    cart.forEach((item) => {
+        let quantity = item.quantity;
+        let cost = parseFloat(item.cost.substring(1));
+        total += quantity * cost;
+    })
+    return total;
   };
 
   const handleContinueShopping = (e) => {
-   
+    onContinueShopping(e)
   };
 
-
-
   const handleIncrement = (item) => {
+    dispatch(updateQuantity({ name: item.name, quantity: item.quantity + 1 }));
   };
 
   const handleDecrement = (item) => {
-   
+    if (item.quantity > 0) {
+        dispatch(updateQuantity({ name: item.name, quantity: item.quantity - 1 }));
+    }
   };
 
   const handleRemove = (item) => {
+    dispatch(removeItem({ name: item.name }))
   };
 
   // Calculate total cost based on quantity for an item
   const calculateTotalCost = (item) => {
+    return item.quantity * parseFloat(item.cost.substring(1));
   };
 
   return (
@@ -43,7 +52,10 @@ const CartItem = ({ onContinueShopping }) => {
               <div className="cart-item-name">{item.name}</div>
               <div className="cart-item-cost">{item.cost}</div>
               <div className="cart-item-quantity">
+                {item.quantity > 0 ?
                 <button className="cart-item-button cart-item-button-dec" onClick={() => handleDecrement(item)}>-</button>
+                : <button className="cart-item-button cart-item-button-dec" style={{ cursor: 'not-allowed', backgroundColor: '#fafafa'}}>-</button>
+                }
                 <span className="cart-item-quantity-value">{item.quantity}</span>
                 <button className="cart-item-button cart-item-button-inc" onClick={() => handleIncrement(item)}>+</button>
               </div>
